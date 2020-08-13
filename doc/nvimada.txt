@@ -1,0 +1,52 @@
+*nvimada.txt*  Ada navigation into neovim
+
+NvimAda is a plugin to navigate in Ada sources using Libadalang.
+
+==============================================================================
+CONTENTS                                                     *NvimadaContents*
+
+    1. Usage ................ |NvimadaUsage|
+    2. Commands ............. |NvimadaCommands|
+
+==============================================================================
+Section 1: Usage                                                *NvimadaUsage*
+
+This plugin helps with navigation of Ada sources. To locate Ada files in
+your project, Libadalang requires you to provide a GPR project File.
+
+When openning a .gpr file, this plugin will automatically provide the file to
+Libadalang.
+
+You can also run `LalInitProject`: >
+
+   :LalInitProject my_project.gpr
+
+
+When openning a .ads or .adb file, this plugin will try to find a .gpr file
+in the current directory. If only one is found, it will be loaded. Otherwise
+Libadalang will be initialized with all the ada files recursively contained in
+the current directory.
+
+To go to the definition of any variable, use `LalLocate`: >
+
+   :LalLocate
+
+This will automatically open a new buffer where the variable is defined and
+move the cursor to this variable.
+
+==============================================================================
+Section 2: Commands                                          *NvimadaCommands*
+
+                                                             *:LalInitProject*
+:LalInitProject [project]       Initialize with the given GPR project file.
+
+                                                                *:LalInitAuto*
+:LalInitAuto                    Initialize with all ada file recursively
+                                defined in the current directory
+
+                                                                  *:LalLocate*
+:LalLocate                      Find and move the cursor to the definition of
+                                the entity below the cursor.
+
+==============================================================================
+
