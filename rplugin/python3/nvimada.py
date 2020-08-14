@@ -21,6 +21,9 @@ class Main(object):
         self.ctx = None
         self.auto_provider = False
 
+    def move_cursor(self, line, col):
+        # Cursor is 0 based on columns, LAL is 1 based
+        self.vim.current.window.api.set_cursor([line, col-1])
 
     @neovim.autocmd('BufReadPre')
     def onBufReadPre(self):
@@ -77,5 +80,4 @@ class Main(object):
                 line = reference.sloc_range.start.line
                 col = reference.sloc_range.start.column
 
-                # Cursor is 0 based on columns, LAL is 1 based
-                self.vim.current.window.api.set_cursor([line, col-1])
+                self.move_cursor(line, col)
