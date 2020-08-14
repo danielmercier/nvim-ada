@@ -67,13 +67,15 @@ class Main(object):
 
         node = file.root.lookup(sloc)
 
-        if node.is_a(lal.Name):
+        if node is not None and node.is_a(lal.Name):
             reference = node.p_referenced_defining_name()
-            filename = reference.unit.filename
-            self.vim.command("edit {}".format(filename))
 
-            line = reference.sloc_range.start.line
-            col = reference.sloc_range.start.column
+            if reference is not None:
+                filename = reference.unit.filename
+                self.vim.command("edit {}".format(filename))
 
-            # Cursor is 0 based on columns, LAL is 1 based
-            self.vim.current.window.api.set_cursor([line, col-1])
+                line = reference.sloc_range.start.line
+                col = reference.sloc_range.start.column
+
+                # Cursor is 0 based on columns, LAL is 1 based
+                self.vim.current.window.api.set_cursor([line, col-1])
