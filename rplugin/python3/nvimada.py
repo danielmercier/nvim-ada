@@ -35,7 +35,7 @@ class Main(object):
                 if len(projects) == 1:
                     self.lalInitProject(projects)
                 else:
-                    self.lalInitAuto()
+                    self.lalInitAuto([])
 
     @neovim.function('LalInitProject', sync=True)
     def lalInitProject(self, args):
