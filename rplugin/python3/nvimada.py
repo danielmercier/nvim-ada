@@ -12,7 +12,7 @@ def findGPRFile():
     # Try to find a project file .gpr
     projects = [f for f in listdir(getcwd()) if is_project_file(f)]
 
-    return projects[0]
+    return projects
 
 @neovim.plugin
 class Main(object):
