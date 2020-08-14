@@ -52,6 +52,7 @@ class Main(object):
                 ada_files.extend([f for f in filenames if is_ada_file(f)])
 
             unit_provider = lal.UnitProvider.auto(ada_files)
+            self.ctx = lal.AnalysisContext(unit_provider=unit_provider)
             self.auto_provider = True
 
     @neovim.function('LalLocate', sync=True)
