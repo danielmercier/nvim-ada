@@ -70,8 +70,18 @@ class Main(object):
 
         node = file.root.lookup(sloc)
 
-        if node is not None and node.is_a(lal.Name):
-            reference = node.p_referenced_defining_name()
+        if node is not None:
+            reference = None
+
+            if node.parent.is_a(lal.DefiningName):
+                # Go to next part for decl if this is a defining name
+                reference = node.parent.p_next_part
+
+                if reference is None:
+                    # Try previous part
+                    reference = node.parent.p_previous_part
+            elif node.is_a(lal.Name):
+                reference = node.p_referenced_defining_name()
 
             if reference is not None:
                 filename = reference.unit.filename
