@@ -2,17 +2,21 @@ import neovim
 import libadalang as lal
 from os import listdir, getcwd, walk
 
+
 def is_project_file(filename):
     return filename.endswith('.gpr')
 
+
 def is_ada_file(filename):
     return filename.endswith('.adb') or filename.endswith('.ads')
+
 
 def findGPRFile():
     # Try to find a project file .gpr
     projects = [f for f in listdir(getcwd()) if is_project_file(f)]
 
     return projects
+
 
 @neovim.plugin
 class Main(object):
@@ -23,7 +27,7 @@ class Main(object):
 
     def move_cursor(self, line, col):
         # Cursor is 0 based on columns, LAL is 1 based
-        self.vim.current.window.api.set_cursor([line, col-1])
+        self.vim.current.window.api.set_cursor([line, col - 1])
 
     @neovim.autocmd('BufReadPre')
     def onBufReadPre(self):
@@ -58,17 +62,20 @@ class Main(object):
             self.ctx = lal.AnalysisContext(unit_provider=unit_provider)
             self.auto_provider = True
 
-    @neovim.function('LalLocate', sync=True)
-    def lalLocate(self, args):
-        file = self.ctx.get_from_file(
-            self.vim.current.buffer.api.get_name(), reparse=True)
+    def cursorNode(self):
+        file = self.ctx.get_from_file(self.vim.current.buffer.api.get_name(),
+                                      reparse=True)
 
         (line, col) = self.vim.current.window.api.get_cursor()
 
         # Cursor is 0 based on columns, LAL is 1 based
-        sloc = lal.Sloc(line, col+1)
+        sloc = lal.Sloc(line, col + 1)
 
-        node = file.root.lookup(sloc)
+        return file.root.lookup(sloc)
+
+    @neovim.function('LalLocate', sync=True)
+    def lalLocate(self, args):
+        node = self.cursorNode()
 
         if node is not None:
             reference = None
@@ -91,3 +98,17 @@ class Main(object):
                 col = reference.sloc_range.start.column
 
                 self.move_cursor(line, col)
+        else:
+            self.vim.err_write("cannot get node under cursor\n")
+
+    @neovim.function('LalIsDispatching', sync=True)
+    def lalIsDispatching(self, args):
+        node = self.cursorNode()
+
+        if node is not None:
+            if node.is_a(lal.Name):
+                self.vim.out_write(str(node.p_is_dispatching_call()) + '\n')
+            else:
+                self.vim.out_write("not a name\n")
+        else:
+            self.vim.err_write("cannot get node under cursor\n")
